@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내가 제일 잘나가 - 학습 대시보드</title>
+  <!-- Google Fonts: Serif (Lora), Gothic (Noto Sans KR) & Hip/Bold (Black Han Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Lora:ital,wght@0,400..700;1,400..700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Utility Settings Bar -->
+    <div class="utility-bar">
+      <button id="backup-btn" title="데이터 백업 (JSON 다운로드)" class="icon-btn">
+        <i data-lucide="download"></i> <span>백업</span>
+      </button>
+      <button id="restore-btn" title="데이터 복원 (JSON 업로드)" class="icon-btn">
+        <i data-lucide="upload"></i> <span>복원</span>
+      </button>
+      <input type="file" id="restore-file-input" style="display: none;" accept=".json">
+      <button id="reset-btn" title="데이터 초기화" class="icon-btn danger">
+        <i data-lucide="refresh-cw"></i> <span>초기화</span>
+      </button>
+    </div>
+
+    <!-- Header Section -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <div class="logo-area">
+          <i data-lucide="book-open" class="logo-icon"></i>
+          <h1>내가 제일 잘나가</h1>
+        </div>
+        <p class="subtitle-date" id="current-date-display">2026년 7월 4일 토요일</p>
+      </div>
+      <div class="header-right">
+        <div class="resolve-card">
+          <label for="resolve-input" class="resolve-label">
+            <i data-lucide="pen-tool"></i> 오늘의 한 줄 다짐
+          </label>
+          <input type="text" id="resolve-input" placeholder="오늘 하루도 차근차근 배워나갑니다." maxlength="60">
+        </div>
+      </div>
+    </header>
+
+    <!-- Top Summary Widgets Grid -->
+    <section class="summary-widgets">
+      <!-- Streak Widget -->
+      <div class="widget-card streak-widget">
+        <div class="widget-header">
+          <div class="widget-title">
+            <i data-lucide="flame" class="streak-icon"></i>
+            <h2>연속 학습 스트릭</h2>
+          </div>
+        </div>
+        <div class="streak-body">
+          <div class="streak-counter">
+            <span class="streak-number" id="streak-count">0</span>
+            <span class="streak-unit">일째</span>
+          </div>
+          <p class="streak-desc" id="streak-desc">오늘도 배움을 채우고 불꽃을 유지해 보세요!</p>
+        </div>
+      </div>
+
+      <!-- Recent Notes Preview Widget -->
+      <div class="widget-card recent-notes-widget">
+        <div class="widget-header">
+          <div class="widget-title">
+            <i data-lucide="scroll-text"></i>
+            <h2>최근 메모 미리보기</h2>
+          </div>
+        </div>
+        <div class="recent-notes-body">
+          <ul class="recent-notes-list" id="recent-notes-list">
+            <!-- Dynamic items go here -->
+            <li class="empty-state">아직 기록된 공부 메모가 없습니다.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace Grid -->
+    <!-- Main Workspace Grid -->
+    <main class="main-dashboard-grid">
+      
+      <div class="left-column">
+        <!-- Japanese Progress Section -->
+        <section class="widget-card language-section japanese-theme" id="japanese-widget">
+          <div class="widget-header section-header collapsible-header" id="ja-header-toggle">
+            <div class="widget-title">
+              <i data-lucide="languages" class="lang-icon"></i>
+              <h2>日本語 <span class="lang-sub">일본어 독학</span></h2>
+            </div>
+            <div class="header-right-side">
+              <span class="badge badge-ja">Day 진도</span>
+              <i data-lucide="chevron-down" class="section-toggle-icon"></i>
+            </div>
+          </div>
+
+          <div class="section-body collapsed" id="ja-section-body">
+            <!-- Active Study Target Card -->
+            <div class="target-study-box">
+              <div class="target-title-row">
+                <span class="target-label">오늘의 학습 목표</span>
+                <span class="target-day" id="ja-target-day-display">Day 1</span>
+              </div>
+              
+              <div class="input-group">
+                <label for="ja-memo-input">학습 메모 <span class="char-count" id="ja-char-count">0/150</span></label>
+                <textarea id="ja-memo-input" placeholder="오늘 학습한 단어, 문법, 느낀 점 등을 간단히 기록하세요." maxlength="150" rows="3"></textarea>
+              </div>
+              
+              <button type="button" id="ja-complete-btn" class="primary-btn ja-btn">
+                <i data-lucide="check-circle-2"></i> 오늘 진도 학습 완료
+              </button>
+            </div>
+
+            <!-- Progress Bar Area -->
+            <div class="progress-container">
+              <div class="progress-info">
+                <span class="progress-percent-label">전체 진도율 <strong id="ja-progress-percent">0%</strong></span>
+                <span class="progress-ratio" id="ja-progress-ratio">0 / 100 Days</span>
+              </div>
+              <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="ja-progress-fill" style="width: 0%;"></div>
+              </div>
+              <!-- Target Days Adjustment -->
+              <div class="total-days-setting">
+                <button id="toggle-settings-ja-btn" class="text-link-btn">목표 일수 변경</button>
+                <div id="ja-settings-box" class="settings-inline hidden">
+                  <input type="number" id="ja-total-days-input" value="100" min="1" max="365">
+                  <span>일로 변경</span>
+                  <button id="save-ja-total-btn" class="mini-btn">확인</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Archive Collapsible Section -->
+            <div class="archive-section">
+              <button type="button" class="archive-toggle-btn" id="archive-toggle-btn">
+                <span><i data-lucide="archive"></i> 완료한 Day 아카이브 (<span id="ja-archive-count">0</span>)</span>
+                <i data-lucide="chevron-down" class="toggle-icon" id="archive-toggle-icon"></i>
+              </button>
+              <div class="archive-content hidden" id="archive-content">
+                <ul class="archive-list" id="ja-archive-list">
+                  <!-- Dynamic archive list items -->
+                  <li class="empty-state">완료한 학습 내역이 없습니다. 첫 진도를 완료해 보세요!</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- French Review Section -->
+        <section class="widget-card language-section french-theme" id="french-widget">
+          <div class="widget-header section-header collapsible-header" id="fr-header-toggle">
+            <div class="widget-title">
+              <i data-lucide="graduation-cap" class="lang-icon"></i>
+              <h2>Français <span class="lang-sub">프랑스어 복습</span></h2>
+            </div>
+            <div class="header-right-side">
+              <span class="badge badge-fr">학원 복습</span>
+              <i data-lucide="chevron-down" class="section-toggle-icon"></i>
+            </div>
+          </div>
+
+          <div class="section-body collapsed" id="fr-section-body">
+            <!-- Note Entry Form -->
+            <div class="french-form-area">
+              <div class="form-header-row">
+                <h3 id="fr-selected-date-title">2026-07-04 복습 노트</h3>
+                <div class="completion-checkbox-wrapper">
+                  <input type="checkbox" id="fr-complete-checkbox" class="custom-checkbox">
+                  <label for="fr-complete-checkbox" class="checkbox-label">
+                    <span class="custom-checkbox-box"></span>
+                    복습 완료
+                  </label>
+                </div>
+              </div>
+
+              <div class="notes-category-inputs">
+                <div class="category-tabs">
+                  <button type="button" class="tab-btn active" data-tab="words">단어</button>
+                  <button type="button" class="tab-btn" data-tab="grammar">문법</button>
+                  <button type="button" class="tab-btn" data-tab="expressions">표현</button>
+                </div>
+
+                <!-- Category Contents Area -->
+                <div class="tab-content" id="tab-words">
+                  <label for="fr-words-input">어휘 및 단어 정리</label>
+                  <textarea id="fr-words-input" placeholder="오늘 배운 주요 단어들을 뜻과 함께 기록하세요. (예: le livre - 책)" rows="6"></textarea>
+                </div>
+                <div class="tab-content hidden" id="tab-grammar">
+                  <label for="fr-grammar-input">문법 포인트 정리</label>
+                  <textarea id="fr-grammar-input" placeholder="핵심 동사 변화나 문법 규칙을 기록하세요. (예: être 동사 현재 변화)" rows="6"></textarea>
+                </div>
+                <div class="tab-content hidden" id="tab-expressions">
+                  <label for="fr-expressions-input">유용한 회화 표현</label>
+                  <textarea id="fr-expressions-input" placeholder="실생활 회화나 유용한 숙어 표현을 정리하세요. (예: Enchanté - 만나서 반갑습니다)" rows="6"></textarea>
+                </div>
+              </div>
+
+              <button type="button" id="fr-save-btn" class="primary-btn fr-btn">
+                <i data-lucide="save"></i> 복습 노트 저장
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Study Calendar Section -->
+      <section class="widget-card calendar-theme" id="calendar-widget">
+        <div class="widget-header section-header collapsible-header" id="calendar-header-toggle">
+          <div class="widget-title">
+            <i data-lucide="calendar" class="lang-icon"></i>
+            <h2>달력 <span class="lang-sub">학습 기록</span></h2>
+          </div>
+          <div class="header-right-side">
+            <span class="badge badge-calendar">배움의 달력</span>
+            <i data-lucide="chevron-down" class="section-toggle-icon"></i>
+          </div>
+        </div>
+
+        <div class="section-body collapsed" id="calendar-section-body">
+          <div class="french-calendar-area">
+            <div class="calendar-header">
+              <button type="button" id="prev-month-btn" class="cal-nav-btn"><i data-lucide="chevron-left"></i></button>
+              <h3 id="calendar-month-year-display">2026년 7월</h3>
+              <button type="button" id="next-month-btn" class="cal-nav-btn"><i data-lucide="chevron-right"></i></button>
+            </div>
+            
+            <div class="calendar-days-header">
+              <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+            </div>
+            
+            <div class="calendar-grid" id="calendar-grid-body">
+              <!-- Dynamic calendar days -->
+            </div>
+
+            <div class="calendar-legend">
+              <div class="legend-item"><span class="dot dot-fr"></span> 프랑스어 복습완료</div>
+              <div class="legend-item"><span class="dot dot-ja"></span> 일본어 학습완료</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal for Japanese Archive Edit -->
+  <div class="modal hidden" id="ja-edit-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="ja-modal-title">Day X 메모 수정</h3>
+        <button type="button" id="ja-modal-close-btn" class="close-btn"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <label for="ja-modal-memo-input">학습 메모</label>
+          <textarea id="ja-modal-memo-input" maxlength="150" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="ja-modal-save-btn" class="primary-btn ja-btn">수정 내용 저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script File -->
+  <script src="app.js"></script>
+</body>
+</html>
